@@ -1,0 +1,39 @@
+
+server:
+
+\u00A0 port: 8080
+
+
+spring:
+  resources:
+    static-locations: classpath:/static
+    add-mappings: true
+
+
+
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bylw?useUnicode=true&characterEncoding=utf8&&useSSL=true&serverTimezone=UTC
+    username: root
+    password: 123456
+    druid:
+      db-type: com.alibaba.druid.pool.DruidDataSource
+      filter: stat
+      max-active: 20
+      initial-size: 1
+      max-wait: 60000
+      min-idle: 1
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 'x'
+      test-while-idle: true
+      test-on-borrow: true
+      test-on-return: false
+      pool-prepared-statements: true
+      max-open-prepared-statements: 20
+
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.xyafu.gtms.entity
