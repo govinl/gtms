@@ -1,4 +1,8 @@
+layui.use(['layer'],function () {
+    var layer=layui.layer;
+})
 function newtopicbody() {
+    var $=layui.jquery;
     //获取最后一个类别输入框的id
     var divId=$('#topictbody').children("tr:last-child").attr('id');
     var i=divId.substring(9);
@@ -30,6 +34,11 @@ function newtopicbody() {
         "                                                        style=\"display: none;float: left;margin-right: 10px;\"><label><i\n" +
         "                                                        class=\"mdi mdi-delete-empty\"></i></label> 修改数据\n" +
         "                                                </button>\n" +
+        "                                                <button class=\"btn btn-label btn-warning col-sm-5 col-md-5 col-lg-5\"\n" +
+        "                                                        id=\"overchangebtn"+newid+"\" onclick=\"javascript:window.location.reload()\"\n" +
+        "                                                        style=\"display: none;float: left;margin-right: 10px;\"><label><i\n" +
+        "                                                        class=\"mdi mdi-delete-empty\"></i></label> 取消修改\n" +
+        "                                                </button>\n" +
         "                                                <button class=\"btn btn-label btn-primary col-sm-5 col-md-5 col-lg-5\"\n" +
         "                                                        id=\"topicchangesubbtn"+newid+"\" onclick=\"changeTopicSub(this)\"\n" +
         "                                                        style=\"display: none;float: left;margin-right: 10px;\"><label><i\n" +
@@ -44,6 +53,8 @@ function newtopicbody() {
         "                                        </tr>");
     $('#topicnum' + newid).html(newid);
 }
+
+//提交题目
 function newTopic(element) {
     //被点击的提交按钮的id
     var id=element.id;
@@ -127,8 +138,10 @@ function changeTopic(element) {
         var id=element.id;
         var i=id.substring(14);
         getCookie("topic"+i);
-        //锁定修改按钮
-        $('#topicchangebtn' + i).attr("disabled",true);
+        //隐藏修改按钮
+        $('#topicchangebtn' + i).hide();
+        //显示取消修改按钮
+        $('#overchangebtn'+i).show();
         //隐藏删除按钮
         $('#topicdeletebtn' + i).hide();
         //解锁输入框
@@ -137,7 +150,7 @@ function changeTopic(element) {
         //显示提交按钮
         $('#topicchangesubbtn' + i).show();
     }else{
-        lightyear.notify("请先完成正在进行的修改操作！","danger");
+        layer.msg("请先完成正在进行的修改操作！",{icon:5});
     }
 }
 //点击提交修改按钮后
@@ -160,10 +173,10 @@ function changeTopicSub(element) {
         success: function (result) {
             var json = eval(result);
             if (true == (json.res)) {
-                lightyear.notify(json.msg,"success");
+                parent.layer.msg(json.msg,{icon:1});
                 window.location.reload();
             }else {
-                lightyear.notify(json.msg,"danger");
+                parent.layer.msg(json.msg,{icon:1});
                 window.location.reload();
             }
         }
@@ -187,10 +200,10 @@ function deleteTopic(element) {
         success: function (result) {
             var json = eval(result);
             if (true == (json.res)) {
-                lightyear.notify(json.msg,"success");
+                parent.layer.msg(json.msg,{icon:1});
                 window.location.reload();
             }else {
-                lightyear.notify(json.msg,"danger");
+                parent.layer.msg(json.msg,{icon:2});
                 window.location.reload();
             }
         }
@@ -245,11 +258,15 @@ function dowloadteaowntopic() {
             if(resultcate.res) {
                 teaowntopicToExcel(resultCate.data);
             }else {
-                lightyear.notify("数据请求失败，请稍后再试！","danger")
+                layer.msg("数据请求失败，请稍后再试！",{icon:6})
             }
         }
     });
 }
+/*
+* 因项目重构，下列被注释方法不再使用
+* */
+/*
 //左侧菜单生成方法
 function newmeau(powername) {
     var divId=$('#meau').children("li:last-child").attr('id');
@@ -285,4 +302,4 @@ function mainmeau(funlevel) {
         }
     });
 
-}
+}*/

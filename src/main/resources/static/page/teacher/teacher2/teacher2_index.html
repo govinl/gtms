@@ -20,7 +20,7 @@
     <![endif]-->
     <script>
         // 是否开启刷新记忆tab功能
-        // var is_remember = false;
+         var is_remember = false;
     </script>
 </head>
 <body class="index">
@@ -60,14 +60,14 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('自拟题目','/page/student/funpage/student_zinitimu.html')">
+                        <a onclick="xadmin.add_tab('查看类别','/page/student/funpage/teacher_viewcate.html')">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>自拟题目</cite></a>
+                            <cite>查看类别</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('我的题目','member-del.html')">
+                        <a onclick="xadmin.add_tab('拟定题目','/page/teacher/teacher2/teacher2_topic.html')">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>我的题目</cite></a>
+                            <cite>拟定题目</cite></a>
                     </li>
                 </ul>
             </li>
@@ -78,38 +78,30 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="javascript:;">
-                            <i class="iconfont">&#xe70b;</i>
-                            <cite>查看小组</cite>
-                            <i class="iconfont nav_right">&#xe697;</i></a>
-                        <ul class="sub-menu">
-                            <li>
-                                <a onclick="xadmin.add_tab('组内教师','member-del.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>组内教师</cite></a>
-                            </li>
-                            <li>
-                                <a onclick="xadmin.add_tab('组内同学','member-list1.html')">
-                                    <i class="iconfont">&#xe6a7;</i>
-                                    <cite>组内同学</cite></a>
-                            </li>
-                        </ul>
+                        <a onclick="xadmin.add_tab('分组情况',' ')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>分组情况</cite></a>
+                    </li>
+                    <li>
+                        <a onclick="xadmin.add_tab('组内成员',' ')">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>组内成员</cite></a>
                     </li>
                     <li>
                         <a href="javascript:;">
                             <i class="iconfont">&#xe70b;</i>
-                            <cite>指导教师</cite>
+                            <cite>我的学生</cite>
                             <i class="iconfont nav_right">&#xe697;</i></a>
                         <ul class="sub-menu">
                             <li>
-                                <a onclick="xadmin.add_tab('教师信息','member-del.html')">
+                                <a onclick="xadmin.add_tab('学生题目','member-del.html')">
                                     <i class="iconfont">&#xe6a7;</i>
-                                    <cite>教师信息</cite></a>
+                                    <cite>学生题目</cite></a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('学生信息','member-list1.html')">
+                                <a onclick="xadmin.add_tab('学生文件','member-list1.html')">
                                     <i class="iconfont">&#xe6a7;</i>
-                                    <cite>学生信息</cite></a>
+                                    <cite>学生文件</cite></a>
                             </li>
                         </ul>
                     </li>
@@ -117,42 +109,37 @@
             </li>
             <li>
                 <a href="javascript:;">
-                    <i class="iconfont left-nav-li" lay-tips="文档管理">&#xe83c;</i>
-                    <cite>文档管理</cite>
+                    <i class="iconfont left-nav-li" lay-tips="文档管理">&#xe6b8;</i>
+                    <cite>我的学生</cite>
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('开题报告','/page/student/funpage/student_index.html')">
+                        <a onclick="xadmin.add_tab('学生题目','/page/student/funpage/student_index.html')">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>开题报告</cite></a>
+                            <cite>学生题目</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('中期检查表','member-del.html')">
+                        <a onclick="xadmin.add_tab('学生成绩','/page/student/funpage/student_index.html')">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>中期检查表</cite></a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:;">
-                    <i class="iconfont left-nav-li" lay-tips="论文信息">&#xe74e;</i>
-                    <cite>论文信息</cite>
-                    <i class="iconfont nav_right">&#xe697;</i></a>
-                <ul class="sub-menu">
-                    <li>
-                        <a onclick="xadmin.add_tab('指导教师','/page/student/funpage/student_index.html')">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>指导教师</cite></a>
+                            <cite>学生成绩</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('论文题目','member-del.html')">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>论文题目</cite></a>
-                    </li>
-                    <li>
-                        <a onclick="xadmin.add_tab('论文提交','member-del.html')">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>论文提交</cite></a>
+                        <a href="javascript:;">
+                            <i class="iconfont">&#xe70b;</i>
+                            <cite>学生文件</cite>
+                            <i class="iconfont nav_right">&#xe697;</i></a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a onclick="xadmin.add_tab('开题报告','member-del.html')">
+                                    <i class="iconfont">&#xe6a7;</i>
+                                    <cite>开题报告</cite></a>
+                            </li>
+                            <li>
+                                <a onclick="xadmin.add_tab('中期检查表','member-list1.html')">
+                                    <i class="iconfont">&#xe6a7;</i>
+                                    <cite>中期检查表</cite></a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>

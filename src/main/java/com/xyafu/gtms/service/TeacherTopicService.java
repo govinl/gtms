@@ -1,5 +1,6 @@
 package com.xyafu.gtms.service;
 
+import com.xyafu.gtms.entity.Student_subject;
 import com.xyafu.gtms.entity.Teacher_topic;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface TeacherTopicService {
     boolean deleteTopic(int id);
     boolean insertTopic(Teacher_topic teacher_topic);
     List selectMyTopic(String teaId);
+    List<Teacher_topic> selectTopicByYn(int yN, int pages, int limit);
+    boolean updateByPrimaryKeySelective(Teacher_topic teacher_topic);
 }

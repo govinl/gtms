@@ -30,6 +30,16 @@
     from student_subject
     where id = #{id,jdbcType=INTEGER}
   </select>
+    <select id="selectSubjectByYn" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        <!--
+          根据审核状态查找学生题目
+        -->
+        select
+        <include refid="Base_Column_List" />
+        from student_subject
+        where Y_N = #{yN,jdbcType=INTEGER}
+        limit #{pages,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+    </select>
     <select id="selectOwnSubject" resultMap="BaseResultMap" parameterType="java.lang.String" >
     <!--
     根据stuId查找对应的题目

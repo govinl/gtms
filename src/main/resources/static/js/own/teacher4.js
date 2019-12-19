@@ -1,5 +1,10 @@
+layui.use(['layer'],function () {
+    var layer=layui.layer;
+})
+var $=layui.jquery;
 //新的类别输入框
 function newcate(){
+    var $=layui.jquery;
     //获取最后一个类别输入框的id
     var divId=$('#cateform1').children("div:last-child").attr('id');
     var i=divId.substring(8);
@@ -12,6 +17,7 @@ function newcate(){
         "                                        <div id=\"catebtn"+(Number(i)+Number(1))+"\" class=\"col-sm-4 col-md-4 col-lg-4\" style=\"float: right;margin-bottom: 10px;\">\n" +
         "                                            <button class=\"btn btn-label btn-primary col-sm-5 col-md-5 col-lg-5\"  id=\"catesubbtn"+(Number(i)+Number(1))+"\" onclick=\"newCategory(this)\" style=\"float: left\"><label><i class=\"mdi mdi-checkbox-marked-circle-outline\"></i></label> 确认提交</button>\n" +
         "                                            <button class=\"btn btn-label btn-warning col-sm-5 col-md-5 col-lg-5\" id=\"catechangebtn"+(Number(i)+Number(1))+"\" onclick=\"changeCategory(this)\" style=\"display: none;float: left;margin-right: 10px;\"><label><i class=\"mdi mdi-delete-empty\"></i></label> 修改数据</button>\n" +
+        "                                            <button class=\"btn btn-label btn-danger col-sm-5 col-md-5 col-lg-5\" id=\"cateoverchangebtn"+(Number(i)+Number(1))+"\" onclick=\"javascript:window.location.reload()\" style=\"display: none;float: left;margin-right: 10px;\"><label><i class=\"mdi mdi-close\"></i></label> 修改数据</button>\n" +
         "                                            <button class=\"btn btn-label btn-primary col-sm-5 col-md-5 col-lg-5\"  id=\"catechangesubbtn"+(Number(i)+Number(1))+"\" onclick=\"changeCategorySub(this)\" style=\"display: none;float: left;margin-right: 10px;\"><label><i class=\"mdi mdi-checkbox-marked-circle-outline\"></i></label> 提交修改</button>\n" +
         "                                            <button class=\"btn btn-label btn-danger col-sm-5 col-md-5 col-lg-5\" id=\"catedeletebtn"+(Number(i)+Number(1))+"\" onclick=\"deleteCategory(this)\" style=\"display: none;float: left;\"><label><i class=\"mdi mdi-close\"></i></label> 删除数据</button>\n" +
         "                                        </div>\n" +
@@ -60,7 +66,7 @@ function dowloadcate() {
             if(resultcate.res) {
                 tableToExcel(resultCate.data);
             }else {
-                lightyear.notify("数据请求失败，请稍后再试！","danger")
+                layer.msg("数据请求失败，请稍后再试！",{icon:5})
             }
         }
     });
@@ -86,16 +92,16 @@ function newCategory(element){
             success: function (result) {
                 var json = eval(result);
                 if (true == (json.res)) {
-                    lightyear.notify(json.msg, "success");
+                    parent.layer.msg(json.msg, {icon:1});
                     window.location.reload();
                 } else {
-                    lightyear.notify(json.msg, "danger");
+                   parent.layer.msg(json.msg, {icon:5});
                     window.location.reload();
                 }
             }
         });
     }else {
-        lightyear.notify("请填写类别后再提交！","danger");
+        layer.msg("请填写类别后再提交！",{icon:2});
     }
 }
 
@@ -117,10 +123,10 @@ function deleteCategory(element) {
         success: function (result) {
             var json = eval(result);
             if (true == (json.res)) {
-                lightyear.notify(json.msg,"success");
+                parent.layer.msg(json.msg,{icon:1});
                 window.location.reload();
             }else {
-                lightyear.notify(json.msg,"danger");
+                parent.layer.msg(json.msg,{icon:5});
                 window.location.reload();
             }
         }
@@ -144,8 +150,10 @@ function changeCategory(element) {
         var id = element.id;
         var i = id.substring(13);
         setCookie('oldcname',$('#cate'+i).val());
-        //锁定修改按钮
-        $('#catechangebtn' + i).attr("disabled",true);
+        //隐藏修改按钮
+        $('#catechangebtn' + i).hide();
+        //显示取消修改按钮
+        $('#cateoverchangebtn' + i).show();
         //隐藏删除按钮
         $('#catedeletebtn' + i).hide();
         //解锁输入框
@@ -153,7 +161,7 @@ function changeCategory(element) {
         //显示提交按钮
         $('#catechangesubbtn' + i).show();
     }else{
-        lightyear.notify("请先完成正在进行的修改操作！","danger");
+        layer.msg("请先完成正在进行的修改操作！",{icon:6});
     }
 }
 //点击提交修改按钮后
@@ -175,10 +183,10 @@ function changeCategorySub(element) {
         success: function (result) {
             var json = eval(result);
             if (true == (json.res)) {
-                lightyear.notify(json.msg,"success");
+                parent.layer.msg(json.msg,{icon:1});
                 window.location.reload();
             }else {
-                lightyear.notify(json.msg,"danger");
+                parent.layer.msg(json.msg,{icon:2});
                 window.location.reload();
             }
         }

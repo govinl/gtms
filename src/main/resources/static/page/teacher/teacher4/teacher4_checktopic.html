@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>信阳农林学院毕业论文指导过程管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.min.css" rel="stylesheet">
+    <link href="/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/own/public.js"></script>
+    <script type="text/javascript" src="/js/own/teacher4.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<style type="text/css">
+    .layui-table-body{overflow-x: hidden;}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <!--自定义页面内容-->
+
+            <!--tips-->
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <blockquote class="layui-elem-quote">
+                        题目审核后无法修改审核结果，敬请注意！
+                    </blockquote>
+                </div>
+            </div>
+            <!--END tips-->
+
+            <!--教师题目审核-->
+            <table class="layui-hide" id="topic" lay-filter="topic"></table>
+            <!--END教师题目审核-->
+
+            <!--END自定义页面内容-->
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="CheckPass">通过选中的题目</button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="CheckFail">不通过选中的题目</button>
+    </div>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="pass">通过审核</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="fail">审核失败</a>
+</script>
+<script type="text/html" id="xuhao">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+
+        table.render({
+            elem: '#topic'
+            ,url:'/topic/selectTopicByYn'
+            ,where:{yN:0}
+            ,method:'post'
+            /*,parseDate: function (res) {
+                var res=eval(res);
+                console.log(res);
+                return{
+                    "res": res.res,
+                    "msg":res.msg,
+                    "count":res.total,
+                    "data":res.data
+                };
+            }*/
+            ,response:{
+                statusName: 'res'
+                ,statusCode:true
+                ,countName: 'msg'
+            }
+            ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            ,defaultToolbar: ['filter', 'exports', 'print']
+            ,title: '学生自拟题目表'
+            ,even:true
+            ,cols: [[
+                {type: 'checkbox'}
+                ,{title: '序号',templet: '#xuhao'}
+                ,{field:'id', title:'题目id',sort: true,hide:true}
+                ,{field:'topic', title:'题目',}
+                ,{field:'teaId', title:'教师编号', sort: true}
+                ,{field:'teaName', title:'教师姓名'}
+                ,{field:'cname', title:'类别'}
+                ,{title:'审核', toolbar: '#barDemo'}
+            ]]
+            ,page: true
+        });
+
+        //头工具栏事件
+        table.on('toolbar(topic)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'CheckPass':
+                    var review={};
+                    review['id']=[];
+                    for (let i=0;i<checkStatus.data.length;i++){
+                        review['id'].push(checkStatus.data[i].id);
+                    }
+                    review['type']="pass";
+                    if (review.id.length==0){
+                        layer.msg("请先选中数据！",{icon:5})
+                    } else {
+                        $.ajax({
+                            url: "/topic/review",
+                            type: 'post',
+                            contentType: 'application/json;charset=UTF-8',
+                            dataType: 'json',
+                            data: JSON.stringify(review),
+                            async: true,
+                            cache: false,
+                            success: function (reviewresult) {
+                                var reviewresult = eval(reviewresult);
+                                if (reviewresult.res == true) {
+                                    layer.msg(reviewresult.msg, {icon: 1});
+                                    table.reload('topic');
+                                } else if (reviewresult.res == false) {
+                                    layer.msg(reviewresult.msg, {icon: 5})
+                                } else {
+                                    layer.msg(reviewresult.msg, {icon: 5})
+                                }
+                            }
+                        });
+                    }
+                    break;
+                case 'CheckFail':
+                    var review={};
+                    review['id']=[];
+                    for (let i=0;i<checkStatus.data.length;i++){
+                        review['id'].push(checkStatus.data[i].id);
+                    }
+                    review['type']="fail";
+                    if (review.id.length==0){
+                        layer.msg("请先选中数据！",{icon:5})
+                    } else {
+                        $.ajax({
+                            url: "/topic/review",
+                            type: 'post',
+                            contentType: 'application/json;charset=UTF-8',
+                            dataType: 'json',
+                            data: JSON.stringify(review),
+                            async: true,
+                            cache: false,
+                            success: function (reviewresult) {
+                                var reviewresult = eval(reviewresult);
+                                if (reviewresult.res == true) {
+                                    layer.msg(reviewresult.msg, {icon: 1});
+                                    table.reload('topic');
+                                } else if (reviewresult.res == false) {
+                                    layer.msg(reviewresult.msg, {icon: 5})
+                                } else {
+                                    layer.msg(reviewresult.msg, {icon: 5})
+                                }
+                            }
+                        });
+                    }
+                    break;
+            }
+        });
+
+        //监听行工具事件
+        table.on('tool(topic)', function(obj){
+            var data = obj.data;
+            console.log(obj);
+            if(obj.event === 'pass'){
+                var topic={}
+                topic['id']=[];
+                topic['id'].push(data.id);
+                topic['type']='pass';
+                $.ajax({
+                    url: "/topic/review",
+                    type: 'post',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    data: JSON.stringify(topic),
+                    async: true,
+                    cache: false,
+                    success:function (reviewresult) {
+                        var reviewresult=eval(reviewresult);
+                        if (reviewresult.res==true){
+                            layer.msg(reviewresult.msg,{icon:1});
+                            table.reload('topic');
+                        } else if (reviewresult.res==false){
+                            layer.msg(reviewresult.msg,{icon:5})
+                        } else {
+                            layer.msg(reviewresult.msg,{icon:5})
+                        }
+                    }
+                })
+            } else if(obj.event === 'fail'){
+                var topic={}
+                topic['id']=[];
+                topic['id'].push(data.id);
+                topic['type']='fail';
+                $.ajax({
+                    url: "/topic/review",
+                    type: 'post',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    data: JSON.stringify(topic),
+                    async: true,
+                    cache: false,
+                    success:function (reviewresult) {
+                        var reviewresult=eval(reviewresult);
+                        if (reviewresult.res==true){
+                            layer.msg(reviewresult.msg,{icon:1})
+                            table.reload('topic');
+                        } else if (reviewresult.res==false){
+                            layer.msg(reviewresult.msg,{icon:5})
+                        } else {
+                            layer.msg(reviewresult.msg,{icon:5})
+                        }
+                    }
+
+                })
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

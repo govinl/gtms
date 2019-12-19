@@ -48,10 +48,26 @@ public class StudentSubjectServiceImpl implements StudentSubjectService {
     }
 
     /**
+     * 查找学生题目
+     * @return
+     */
+    @Override
+    public List<Student_subject> selectSubjectByYn(int yN,int pages,int limit) {
+        List<Student_subject> student_subjects=student_subjectMapper.selectSubjectByYn(yN,pages,limit);
+        return student_subjects;
+    }
+
+    @Override
+    public boolean updateByPrimaryKeySelective(Student_subject student_subject) {
+        student_subjectMapper.updateByPrimaryKeySelective(student_subject);
+        return true;
+    }
+
+    /**
      * 根据学号和题目删除
      */
     @Override
-    public boolean deleteOld(int Id) {
+    public boolean deleteOld(Object Id) {
         student_subjectMapper.deleteByPrimaryKey(Id);
         return true;
     }

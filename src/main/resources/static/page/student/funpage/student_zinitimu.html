@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    <head>
+        <meta charset="UTF-8">
+        <title>信阳农林学院毕业论文指导过程管理系统</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="/css/font.css">
+        <link rel="stylesheet" href="/css/xadmin.css">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/style.min.css" rel="stylesheet">
+        <script src="/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/js/xadmin.js"></script>
+        <script type="text/javascript" src="/js/own/public.js"></script>
+        <script type="text/javascript" src="/js/own/student.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md10">
+                    <!--学生自拟题目主要元素-->
+                    <!--tips-->
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <blockquote class="layui-elem-quote">
+                                每位学生仅可以自拟三个题目！
+                                提交之后不可修改，请注意！！！
+                            </blockquote>
+                        </div>
+                    </div>
+                    <!--END tips-->
+                    <!--自拟题目所需元素-->
+                    <!--题目一-->
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="card">
+                            <div class="card-header bg-primary">
+                                <h4>题目一</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="card">
+
+                                    <form action="#">
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入题目：</span>
+                                            <input type="text" class="form-control" placeholder="题目"
+                                                   aria-describedby="basic-addon1" id="subject1">
+                                        </div>
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入类别：</span>
+                                            <input type="text" class="form-control" placeholder="类别"
+                                                   aria-describedby="basic-addon1" id="subject_category1" list="cnamelist1" onfocus="cateFocus('subject_category1')" onblur="cateBlur('subject_category1')">
+                                            <datalist id="cnamelist1"></datalist>
+                                        </div>
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入意愿指导老师：</span>
+                                            <input type="text" class="form-control" placeholder="意愿指导老师"
+                                                   aria-describedby="basic-addon1"  id="subject_teacher1" list="twantlist1" onfocus="teaFocus('subject_category1')" onblur="teaBlur('subject_category1')">
+                                            <datalist id="twantlist1"></datalist>
+                                        </div>
+                                        <div class="input-group m-b-10 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="input-group m-b-5 col-xs-6" style="float: left">
+                                                <span class="input-group-addon"   for="example-text-input-info">题目状态</span>
+                                                <input class="form-control col-xs-6" type="text"id="subject_YN1" name="example-text-input-info" placeholder="无" disabled>
+                                            </div>
+                                            <div class="input-group m-b-5" style="float:right">
+                                                <button class="btn btn-label btn-primary" type="button" onclick="subject('subjectsubmit1');" id="subjectsubmit1"><label><i class="mdi mdi-checkbox-marked-circle-outline"></i></label> 确认提交</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--END题目一-->
+                    <!--题目二-->
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="card">
+                            <div class="card-header bg-primary">
+                                <h4>题目二</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="card">
+                                    <form action="#">
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入题目：</span>
+                                            <input type="text" class="form-control" placeholder="题目"
+                                                   aria-describedby="basic-addon1" id="subject2">
+                                        </div>
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入类别：</span>
+                                            <input type="text" class="form-control" placeholder="类别"
+                                                   aria-describedby="basic-addon1" id="subject_category2" list="cnamelist2" onfocus="cateFocus('subject_category2')" onblur="cateBlur('subject_category2')">
+                                            <datalist id="cnamelist2"></datalist>
+                                        </div>
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入意愿指导老师：</span>
+                                            <input type="text" class="form-control" placeholder="意愿指导老师"
+                                                   aria-describedby="basic-addon1"  id="subject_teacher2" list="twantlist2" onfocus="teaFocus('subject_category2')" onblur="teaBlur('subject_category2')">
+                                            <datalist id="twantlist2"></datalist>
+                                        </div>
+                                        <div class="input-group m-b-10 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="input-group m-b-5 col-xs-6" style="float: left">
+                                                <span class="input-group-addon"   for="example-text-input-info">题目状态</span>
+                                                <input class="form-control col-xs-6" type="text"id="subject_YN2" name="example-text-input-info" placeholder="无" disabled>
+                                            </div>
+                                            <div class="input-group m-b-5" style="float:right">
+                                                <button class="btn btn-label btn-primary" type="button" onclick="subject('subjectsubmit2');" id="subjectsubmit2"><label><i class="mdi mdi-checkbox-marked-circle-outline"></i></label> 确认提交</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--END题目二-->
+                    <!--题目三-->
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="card">
+                            <div class="card-header bg-primary">
+                                <h4>题目三</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="card">
+
+                                    <form action="#">
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入题目：</span>
+                                            <input type="text" class="form-control" placeholder="题目"
+                                                   aria-describedby="basic-addon1" id="subject3">
+                                        </div>
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入类别：</span>
+                                            <input type="text" class="form-control" placeholder="类别"
+                                                   aria-describedby="basic-addon1" id="subject_category3" list="cnamelist3" onfocus="cateFocus('subject_category3')" onblur="cateBlur('subject_category3')">
+                                            <datalist id="cnamelist3"></datalist>
+                                        </div>
+                                        <div class="input-group m-b-10">
+                                            <span class="input-group-addon">请输入意愿指导老师：</span>
+                                            <input type="text" class="form-control" placeholder="意愿指导老师"
+                                                   aria-describedby="basic-addon1"  id="subject_teacher3" list="twantlist3" onfocus="teaFocus('subject_category3')" onblur="teaBlur('subject_category3')">
+                                            <datalist id="twantlist3"></datalist>
+                                        </div>
+                                        <div class="input-group m-b-10 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="input-group m-b-5 col-xs-6" style="float: left">
+                                                <span class="input-group-addon"   for="example-text-input-info">题目状态</span>
+                                                <input class="form-control col-xs-6" type="text"id="subject_YN3" name="example-text-input-info" placeholder="无" disabled>
+                                            </div>
+                                            <div class="input-group m-b-5" style="float:right">
+                                                <button class="btn btn-label btn-primary" type="button" onclick="subject('subjectsubmit3');" id="subjectsubmit3"><label><i class="mdi mdi-checkbox-marked-circle-outline"></i></label> 确认提交</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--END题目三-->
+                    <!--END自拟题目-->
+                    <!--END主要元素-->
+                </div>
+            </div>
+        </div>
+        </div>
+
+    <script>
+        layui.use(['element'],function () {
+            var $=layui.jquery;
+            var data2={};
+            data2["stuId"]=getCookie("userId");
+            $.ajax({
+                url:"/subject/selectOwnSubject",
+                type: 'post',
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                data: JSON.stringify(data2),
+                async: false,
+                cache: false,
+                success: function (resultSubject) {
+                    var json3 = eval(resultSubject);
+                    if (false == (json3.res)) {
+                        lightyear.notify("认真填写哦！", "success");
+                    }else {
+                        var length=json3.data.length;
+                        for (i=0;i<length;i++){
+                            if (json3.data[i].yN==0 || json3.data[i].yN==1) {
+                                $('#subject' + (i + 1)).val(json3.data[i].subject);
+                                $('#subject' + (i + 1)).attr("disabled", true);
+                                $('#subject_teacher' + (i + 1)).val(json3.data[i].twant);
+                                $('#subject_teacher' + (i + 1)).attr("disabled", true);
+                                $('#subject_category' + (i + 1)).val(json3.data[i].cname);
+                                $('#subject_category' + (i + 1)).attr("disabled", true);
+                                $('#subject_YN' + (i + 1)).val((json3.data[i].yN==0)?"等待审核":"已审核通过");
+                                $('#subjectsubmit' + (i + 1)).hide();
+                            }else if (json3.data[i].yN==2){
+                                //创建相应cookie，便于后续删除数据
+                                setCookie("subject"+(i+1),json3.data[i].id,1);
+                                $('#subject' + (i + 1)).val(json3.data[i].subject);
+                                $('#subject_teacher' + (i + 1)).val(json3.data[i].twant);
+                                $('#subject_category' + (i + 1)).val(json3.data[i].cname);
+                                $('#subject_YN' + (i + 1)).val('未通过审核，请重新拟题！');
+                            }
+                        }
+                    }
+                }
+            });
+
+        })
+    </script>
+    </body>
+</html>

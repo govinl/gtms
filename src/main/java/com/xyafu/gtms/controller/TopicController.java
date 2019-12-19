@@ -1,14 +1,17 @@
 package com.xyafu.gtms.controller;
 
+import com.xyafu.gtms.entity.Student_subject;
 import com.xyafu.gtms.entity.Teacher_topic;
 import com.xyafu.gtms.entity.Teadirection;
 import com.xyafu.gtms.service.TeacherTopicService;
 import com.xyafu.gtms.service.TeadirectionService;
 import com.xyafu.gtms.untils.Result;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +91,60 @@ public class TopicController {
         }else {
             result.setRes(false);
             result.setMsg("题目修改失败，请稍后再试！");
+        }
+        return result;
+    }
+
+    /**
+     * 根据审核状态查找题目
+     * @param yN
+     * @return
+     */
+    @RequestMapping(value = "/selectTopicByYn",method = RequestMethod.POST)
+    public Result selectSubjectByYn(@Param("yN") int yN, @Param("page") int page, @Param("limit") int limit){
+        Result result=new Result();
+        int pages=(page-1)*10;
+        List<Teacher_topic> teacher_topics=teacherTopicService.selectTopicByYn(yN,pages,limit);
+        result.setRes(true);
+        //查询结果集的大小，用于实现前台分页（limit设置为99999只是为了保证在大批量结果集中，前台数据总量显示正确）
+        List<Teacher_topic> teacher_topics1=teacherTopicService.selectTopicByYn(yN,0,99999);
+        result.setMsg(String.valueOf(teacher_topics1.size()));
+        result.setData(teacher_topics);
+        return result;
+    }
+
+    /**
+     * 题目审核
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/review",method = RequestMethod.POST)
+    public Result review(@RequestBody Map<String,Object> map){
+        Result result=new Result();
+        ArrayList idlist=(ArrayList) map.get("id");
+        Object[] idArray=idlist.toArray();
+        String type=(String)map.get("type");
+        for (int i=0;i<idlist.size();i++) {
+            int id=(int)idArray[i];
+            Teacher_topic teacher_topic=new Teacher_topic();
+            teacher_topic.setId(id);
+            //根据type判断是否通过审核
+            if (type.equals("pass")) {
+                byte newyn = 1;
+                teacher_topic.setyN(newyn);
+            } else if (type.equals("fail")) {
+                byte newyn = 2;
+                teacher_topic.setyN(newyn);
+            } else {
+                result.setMsg("接口状态异常，请稍后再试！");
+            }
+            //提交操作
+            if (teacherTopicService.updateByPrimaryKeySelective(teacher_topic)) {
+                result.setRes(true);
+                result.setMsg("操作已成功提交！");
+            } else {
+                result.setMsg("接口状态异常，请稍后再试！");
+            }
         }
         return result;
     }

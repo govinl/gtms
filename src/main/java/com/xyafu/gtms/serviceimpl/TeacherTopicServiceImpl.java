@@ -44,4 +44,16 @@ public class TeacherTopicServiceImpl implements TeacherTopicService {
         List list=teacher_topicMapper.selectMyTopic(teaId);
         return list;
     }
+
+    @Override
+    public List<Teacher_topic> selectTopicByYn(int yN, int pages, int limit) {
+        List<Teacher_topic> teacher_topics=teacher_topicMapper.selectTopicByYn(yN,pages,limit);
+        return teacher_topics;
+    }
+
+    @Override
+    public boolean updateByPrimaryKeySelective(Teacher_topic teacher_topic) {
+        teacher_topicMapper.updateByPrimaryKeySelective(teacher_topic);
+        return true;
+    }
 }

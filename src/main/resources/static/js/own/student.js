@@ -1,51 +1,14 @@
-//修改密码
-function ChangePassword() {
-    //验证新密码的两次输入是否一致
-    var newpwd = $('#new-password').val();
-    var confirmpwd = $('#confirm-password').val();
-    if (newpwd != confirmpwd) {
-        alert("新密码两次输入不一致，请重新输入！")
-    } else {
-        window.event.returnValue = false;
-        var data = {}
-        data["oldpwd"] = $('#old-password').val();
-        data["newpwd"] = $('#new-password').val();
-        data["confirmpwd"] = $('#confirm-password').val();
-        data["userId"] = getCookie('userId');
-        $.ajax({
-            url: "/student/changepassword",
-            type: 'post',
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            data: JSON.stringify(data),
-            async: true,
-            cache: false,
-            success: function (result) {
-                var json1 = eval(result);
-                if (true == (json1.res)) {
-                    lightyear.notify(json1.msg , "success");
-                } else {
-                    lightyear.notify(json1.msg , "success");
-                }
-            }
-        });
-    }
-}
-
-//注销登录
-function logout() {
-    window.location.href = "/page/login.html";
-}
-
+layui.use(['layer'],function () {
+    var layer=layui.layer;
+    var $=layui.jquery;
+})
 //题目提交,包含修改题目的方法
 function subject(id) {
     window.event.returnValue=false;
-    lightyear.loading("show");
     // i 用于取出参数中的数字，来判断是第几个button 按钮
     var i=id.substring(13);
     if (!$('#subject'+i).val() || !$('#subject_teacher'+i).val() || !$('#subject_category'+i).val()){
-        lightyear.loading("hide");
-        lightyear.notify("请将数据填写完整！", "danger");
+        layer.msg("请将数据填写完整！", {icon: 5});
     } else {
         //status是该题目的状态
         var status=$('#subject_YN'+i).val();
@@ -63,7 +26,7 @@ function subject(id) {
                 success:function (resulrDelete) {
                     var jsonDelete=eval(resulrDelete);
                     if (jsonDelete.res==true){
-                        lightyear.notify("原题目已删除", "success");
+                        parent.layer.msg("原题目已删除", {icon: 1});
                         var data1 = {}
                         data1["subject"] = $('#subject'+i).val();
                         data1["stuId"] =getCookie("userId");
@@ -80,15 +43,13 @@ function subject(id) {
                             success: function (resultNewSubject) {
                                 var json2 = eval(resultNewSubject);
                                 if (true == (json2.res)) {
-                                    lightyear.loading("hide");
-                                    lightyear.notify(json2.msg, "success");
+                                    parent.layer.msg(json2.msg, {icon:1});
                                     window.location.reload();
                                 }
                             }
                         });
                     } else {
-                        lightyear.loading("hide");
-                        lightyear.notify("题目修改失败！", "success");
+                        parent.layer.msg("题目修改失败！", {icon:5});
                         window.location.reload();
                     }
 
@@ -111,8 +72,7 @@ function subject(id) {
                 success: function (resultNew) {
                     var json3 = eval(resultNew);
                     if (true == (json3.res)) {
-                        lightyear.loading("hide");
-                        lightyear.notify(json3.msg, "success");
+                        parent.layer.msg(json3.msg, {icon:1});
                         window.location.reload();
                     }
                 }
@@ -135,7 +95,6 @@ function cateFocus(id){
         success: function (resultAllCateGory) {
             var jsonAllCateGory = eval(resultAllCateGory);
             if (true == (jsonAllCateGory.res)) {
-                console.log(jsonAllCateGory.data);
                 //i是list的长度
                 var i = jsonAllCateGory.data.length;
                 for (j = 0; j < i; j++) {
@@ -180,7 +139,7 @@ function teaFocus(id){
             }
         });
     }else {
-        lightyear.notify("请先选择类别！","danger");
+        layer.msg("请先选择类别！",{icon:5});
         $('#subject_category'+kind).focus();
     }
 }

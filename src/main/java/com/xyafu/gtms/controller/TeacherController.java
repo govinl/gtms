@@ -37,7 +37,7 @@ public class TeacherController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Result teacherLogin(@RequestBody Teacher teacher) {
-        Result result=new Result();
+        Result result = new Result();
         if (teacherService.login(teacher.getTeaId(), teacher.getTeaPwd())) {
             teacher = teacherService.selectByPrimaryKey(teacher.getTeaId());
             result.setRes(true);
@@ -46,16 +46,16 @@ public class TeacherController {
             int level = Integer.parseInt(teacher.getPlevel());
             switch (level / 1) {
                 case 2:
-                    result.setUrl("/page/teacher/teacher2_index.html");
+                    result.setUrl("/page/teacher/teacher2/teacher2_index.html");
                     break;
                 case 3:
-                    result.setUrl("/page/teacher/teacher3_index.html");
+                    result.setUrl("/page/teacher/teacher3/teacher3_index.html");
                     break;
                 case 4:
-                    result.setUrl("/page/teacher/teacher4_index.html");
+                    result.setUrl("/page/teacher/teacher4/teacher4_index.html");
                     break;
                 case 5:
-                    result.setUrl("/page/teacher/teacher5_index.html");
+                    result.setUrl("/page/teacher/teacher5/teacher5_index.html");
                     break;
                 default:
             }
@@ -72,23 +72,23 @@ public class TeacherController {
     /**
      * 修改密码
      */
-    @RequestMapping(value = "/changepassword",method = RequestMethod.POST)
+    @RequestMapping(value = "/changepassword", method = RequestMethod.POST)
     public Result changePassword(
             @RequestBody Map<String, Object> map
-    ){
-        Result result=new Result();
-        String oldpwd= (String) map.get("oldpwd");
-        String newpwd= (String) map.get("newpwd");
-        String confirmpwd= (String) map.get("newpwd");
-        String userId=(String) map.get("userId");
-        if (teacherService.changepwd(userId,oldpwd,newpwd)){
+    ) {
+        Result result = new Result();
+        String oldpwd = (String) map.get("oldpwd");
+        String newpwd = (String) map.get("newpwd");
+        String confirmpwd = (String) map.get("newpwd");
+        String userId = (String) map.get("userId");
+        if (teacherService.changepwd(userId, oldpwd, newpwd)) {
             result.setRes(true);
             result.setMsg("密码修改成功!");
-        }else {
+        } else {
             result.setRes(false);
             result.setMsg("密码修改失败!");
         }
-        return  result;
+        return result;
     }
 
 

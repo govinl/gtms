@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface StudentSubjectService {
     boolean newSubject(Student_subject student_subject);
-    boolean deleteOld(int Id);
+    boolean deleteOld(Object Id);
     List<Student_subject> selectOwnSubject(String userId);
+    List<Student_subject> selectSubjectByYn(int yN,int pages,int limit);
+    boolean updateByPrimaryKeySelective(Student_subject student_subject);
 }
