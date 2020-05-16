@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>信阳农林学院毕业论文指导过程管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.min.css" rel="stylesheet">
+    <link href="/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/own/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <!--自定义页面内容-->
+            <!--tips-->
+            <div class="layui-card">
+                <div class="layui-card-body " style="color: red">
+                    <blockquote class="layui-elem-quote" id="tips">
+                        小组提交后无法修改,请认真考虑,双击对应小组行,可查看组内教师,双击对应教师行,可查看教师拟题!
+                    </blockquote>
+                </div>
+            </div>
+
+            <!--选择小组-->
+            <table id="teamtable" lay-filter="teamtable"></table>
+            <!--END选择小组-->
+            <!--黑色分割线-->
+            <hr class="layui-bg-black" id="firstblack" style="display: none">
+            <!--END分割线-->
+            <!--单击小组时渲染的教师表格-->
+            <table id="teachertable" lay-filter="teachertable"></table>
+            <!--END教师表格-->
+            <!--黑色分割线-->
+            <hr class="layui-bg-black" id="secondblack" style="display: none">
+            <!--END分割线-->
+            <!--单击小组时渲染的教师题目表格-->
+            <table id="teachertopictable" lay-filter="teachertopictable"></table>
+            <!--END教师题目表格-->
+            <!--END自定义页面内容-->
+        </div>
+    </div>
+</div>
+<script type="text/html" id="selectbtn">
+    <a type="button" name="lock" lay-event="selectthisteam" class="layui-btn layui-btn-warm layui-btn-xs layui-btn-radius">选择小组</a>
+</script>
+
+<script>
+
+    /*定义一个用来放小组信息的全局属性*/
+    var teamdata={};
+    /*END*/
+    layui.use(['element','jquery','layer','table'], function () {
+        var $ = layui.jquery;
+        var layer=layui.layer;
+        var table=layui.table;
+
+        /*判断功能是否开启*/
+        $.ajax({
+            url: "/power/checkOnOff",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify({power: "选择小组", funlevel: 1}),
+            async: true,
+            cache: false,
+            success: function (result) {
+                if (result.res) {
+                    return;
+                } else {
+                    parent.layer.msg(result.msg, {icon: 1});
+                    xadmin.del_tab();
+                }
+            }
+        });
+        /*END功能开启*/
+
+        /*发起请求小组信息的请求*/
+        getteamdata();
+        console.log(teamdata);
+        /*END请求*/
+
+        /*判断该学生是否已选择小组*/
+        var stuId={};
+        stuId["stuId"]=getCookie("userId");
+        $.ajax({
+            url: "/student/selectByStuId",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(stuId),
+            async: true,
+            cache: false,
+            success:function (result) {
+                if (result.res==true){
+                    if (result.data.stuTeam==""){
+                        /*小组表格渲染*/
+                        table.render({
+                            elem: '#teamtable'
+                            ,data:teamdata
+                            ,cols: [[ //表头
+                                {field: 'tname', title: '组名', width:'50%',align:'center'}
+                                ,{field: 'nstudent', title: '最大学生人数',align:'center'}
+                                ,{field: 'snumber', title: '组内学生人数',align:'center'}
+                                ,{ title: '操作',toolbar: '#selectbtn',fixed:'right',align:'center'}
+                            ]]
+                        });
+                        /*END小组表格渲染*/
+                    } else {
+                        /*小组表格渲染*/
+                        table.render({
+                            elem: '#teamtable'
+                            ,data:teamdata
+                            ,cols: [[ //表头
+                                {field: 'tname', title: '组名', width:'50%',align:'center'}
+                                ,{field: 'nstudent', title: '最大学生人数',align:'center'}
+                                ,{field: 'snumber', title: '组内学生人数',align:'center'}
+                            ]]
+                        });
+                        /*END小组表格渲染*/
+                        $('#tips').html("您已选择小组,不可修改!您的当前小组为:"+result.data.stuTeam);
+                    }
+                }else {
+                    layer.msg("数据接口异常,请稍后再试!",{icon:5});
+                }
+            }
+        });
+        /*END判断*/
+
+        //监听行工具事件
+        table.on('tool(teamtable)', function(obj){
+            var data = obj.data;
+            console.log(obj);
+            if (obj.event === 'selectthisteam') {
+                /*为适配后台接口,此处数据做特殊处理*/
+                var updataStudentTeamData = {};
+                updataStudentTeamData['stuId']=[];
+                updataStudentTeamData['stuId'].push(getCookie("userId"));
+                updataStudentTeamData['stuTeam'] = data.tname;
+                console.log(updataStudentTeamData);
+                /*END数据*/
+                $.ajax({
+                    url: "/student/updateStudentTeam",
+                    type: 'post',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    data: JSON.stringify(updataStudentTeamData),
+                    async: true,
+                    cache: false,
+                    success: function (result) {
+                        if (result.res==true){
+                            layer.msg("数据提交成功!",{icon:1});
+                            /*学生小组信息修改完成后,提交修改小组内学生人数的请求*/
+                            var teamName={};
+                            teamName['teamName']=data.tname;
+                            $.ajax({
+                                url: "/team/updataTeamSnumber",
+                                type: 'post',
+                                contentType: 'application/json;charset=UTF-8',
+                                dataType: 'json',
+                                data: JSON.stringify(teamName),
+                                async: false,
+                                cache: false,
+                            });
+                            /*END学生人数修改请求*/
+                            /*数据提交后重新渲染表格,避免重复提交*/
+                            getteamdata();
+                            console.log(teamdata);
+                            table.render({
+                                elem: '#teamtable'
+                                ,data:teamdata
+                                ,cols: [[ //表头
+                                    {field: 'tname', title: '组名', width:'50%',align:'center'}
+                                    ,{field: 'nstudent', title: '最大学生人数',align:'center'}
+                                    ,{field: 'snumber', title: '组内学生人数',align:'center'}
+                                ]]
+                            });
+                            /*END小组表格渲染*/
+                            $('#tips').html("您已选择小组,不可修改!您的当前小组为:"+data.tname);
+                            /*END表格渲染*/
+                        }
+                    }
+                })
+            }
+        });
+
+
+
+       /*监听表格行双击事件*/
+        table.on('rowDouble(teamtable)', function(obj){
+            console.log(obj.tr) //得到当前行元素对象
+            console.log(obj.data) //得到当前行数据
+            getteachertabeldata(obj.data.tname);
+        });
+        /*END监听*/
+
+        /*监听表格行双击事件*/
+        table.on('rowDouble(teachertable)', function(obj){
+            console.log(obj.tr) //得到当前行元素对象
+            console.log(obj.data) //得到当前行数据
+            getteachertopictabeldata(obj.data.teaId);
+        });
+        /*END监听*/
+
+    });
+
+    /*发起请求教师信息的请求*/
+    function getteachertabeldata(tname) {
+        var $=layui.jquery;
+        var table=layui.table;
+        var tnamedata={};
+        tnamedata["teamName"]=tname;
+        $.ajax({
+            url: "/teacher/selectTeacherByTeam",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(tnamedata),
+            async: false,
+            cache: false,
+            success: function (result) {
+                table.render({
+                    elem: '#teachertable'
+                    ,data:result.data
+                    ,cols: [[ //表头
+                        {field: 'teaName', title: '姓名', width:'20%',}
+                        ,{field: 'dept', title: '系别', }
+                        ,{field: 'teaPhone', title: '联系电话'}
+                        ,{field: 'teaTeam', title: '所属小组'}
+                    ]]
+                });
+                $('#firstblack').show();
+            }
+        });
+        /*END教师请求*/
+
+
+    }
+    /*发起请求教师题目信息的请求*/
+    function getteachertopictabeldata(teaId) {
+        var $=layui.jquery;
+        var table=layui.table;
+        var teaIddata={};
+        teaIddata["teaId"]=teaId;
+        $.ajax({
+            url: "/topic/selecttopicByteaIdAndYn",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(teaIddata),
+            async: false,
+            cache: false,
+            success: function (result) {
+                table.render({
+                    elem: '#teachertopictable'
+                    ,data:result.data
+                    ,cols: [[ //表头
+                        {field: 'topic', title: '题目', width:'50%',}
+                        ,{field: 'cname', title: '所属类别'}
+                        ,{field: 'teaName', title: '教师姓名', }
+                    ]]
+                });
+            }
+        });
+        /*END教师题目请求*/
+        $('#secondblack').show();
+    }
+    /*发起请求小组信息的方法*/
+    function getteamdata() {
+        $.ajax({
+            url: "/team/allTeam",
+            type: 'post',
+            async: false,
+            cache: false,
+            success: function (result) {
+                var data1 = result.data;
+                teamdata=data1;
+            }
+        });
+    }
+    /*END方法*/
+
+</script>
+</body>
+</html>

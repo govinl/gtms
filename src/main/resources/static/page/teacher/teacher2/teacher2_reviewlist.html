@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>信阳农林学院毕业论文指导过程管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.min.css" rel="stylesheet">
+    <link href="/lib/layui/css/layui.css" rel="stylesheet">
+    <link href="/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/excel.js"></script>
+    <script type="text/javascript" src="/js/own/public.js"></script>
+    <script type="text/javascript" src="/js/own/teacher4.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<style type="text/css">
+    .layui-table-body {
+        overflow-x: hidden;
+    }
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <!--自定义页面内容-->
+
+            <!--tips-->
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <blockquote class="layui-elem-quote">
+                        提交文件时,请注意学生信息是否正确!<a href="/file/downloadExampleExcal?filename=指导过程记录表模板.docx" style="float: right">点击下载：指导过程记录表模板</a>
+                    </blockquote>
+                </div>
+            </div>
+            <!--END tips-->
+
+            <!--小组-->
+            <div style="padding: 20px; background-color: #887777;">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-body" style="font-size: 20px" id="cardbody">
+                                <!--核心元素-->
+                                <!--END核心元素-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--END小组-->
+            <!--END自定义页面内容-->
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script>
+    layui.use(['form', 'layer', 'util', 'transfer', 'element','table','jquery','upload'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , util = layui.util
+            , transfer = layui.transfer
+            ,table=layui.table
+            ,$=layui.jquery
+            ,element=layui.element
+            , upload = layui.upload;
+
+
+        /*判断功能是否开启*/
+        $.ajax({
+            url: "/power/checkOnOff",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify({power: "上传指导过程记录表", funlevel: 2}),
+            async: true,
+            cache: false,
+            success: function (result) {
+                if (result.res) {
+                    return;
+                } else {
+                    parent.layer.msg(result.msg, {icon: 1});
+                    xadmin.del_tab();
+                }
+            }
+        });
+        /*END功能开启*/
+
+        /*加载学生数据*/
+        $.ajax({
+            url: "/student/selectStudentByStuTeacher",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify({stuTeacher:getCookie("userId")}),
+            async: true,
+            cache: false,
+            success: function (result) {
+                for (let i=0;i<result.data.length;i++) {
+                    $('#cardbody').append("<fieldset class=\"layui-elem-field\">\n" +
+                        "                                    <legend id=\"stuname" + (Number(i) + Number(1)) + "\"></legend>\n" +
+                        "                                    <div class=\"layui-field-box\">\n" +
+                        "                                        <form class=\"layui-form \">\n" +
+                        "                                            <div style=\"height: 40px;float:left;margin-right: 90px\">\n" +
+                        "                                            <span>学生学号：</span>\n" +
+                        "                                            <input type=\"text\" readonly id=\"stuId" + (Number(i) + Number(1)) + "\">\n" +
+                        "                                            </div>\n" +
+                        "                                 <div class=\"layui-upload\" style=\"float: left\" id=\"upload" + (Number(i) + Number(1)) + "\">\n" +
+                        "                                    <button type=\"button\" class=\"layui-btn layui-btn-normal  chooseitem\" id=\"chooseitem" + (Number(i) + Number(1)) + "\">选择文件</button>\n" +
+                        "                                    <button type=\"button\" class=\"layui-btn uploaditem\" id=\"uploaditem" + (Number(i) + Number(1)) + "\">开始上传</button>\n" +
+                        "                                </div>\n" +
+                        "                                <div id=\"reviewupload" + (Number(i) + Number(1)) + "\" style=\"display: none\">\n" +
+                        "                                    <span style=\"font-size: 20px;font-family: 楷体;float: left\">该学生的指导过程记录表已经上传,您可点击右侧按钮重新上传,重新上传将会删除您已上传的文件!</span>\n" +
+                        "                                    <button type=\"button\" class=\"layui-btn\" style=\"float: right\" onclick=\"reupload('"+(Number(i) + Number(1))+"');\">重新上传</button>\n" +
+                        "                                </div>\n" +
+                        "                                        </form>\n" +
+                        "                                    </div>\n" +
+                        "                                </fieldset>");
+                    $("#stuname"+(Number(i)+Number(1))+"").html(result.data[i].stuName);
+                    $("#stuId"+(Number(i)+Number(1))+"").val(result.data[i].stuId);
+                    /*查询是否已上传*/
+                    $.ajax({
+                        url: "/file/wasUpload",
+                        type: 'post',
+                        contentType: 'application/json;charset=UTF-8',
+                        dataType: 'json',
+                        data: JSON.stringify({stuId:result.data[i].stuId,filetype:"指导过程记录表"}),
+                        async: false,
+                        cache: false,
+                        success: function (result) {
+                            if (result.res){
+                                $('#upload' + (Number(i) + Number(1))).hide();
+                                $('#reviewupload' + (Number(i) + Number(1))).show();
+                            }else {
+                                /*绑定监听事件*/
+                                //绑定于下方
+                                /*END绑定监听事件*/
+                            }
+                        }
+                    });
+                    /*END判断*/
+                    //选完文件后不自动上传
+                    var loading;
+                    upload.render({
+                        elem: '#chooseitem'+ (Number(i) + Number(1))
+                        ,url: '/file/uploadTeacherFile'
+                        ,data:{
+                            stuId:result.data[i].stuId,
+                            teaId:getCookie("userId"),
+                            filetype:"指导过程记录表"
+                        }
+                        ,accept: 'file' //普通文件
+                        ,acceptMime: '.docx,.doc'
+                        ,auto: false
+                        //,multiple: true
+                        ,bindAction: '#uploaditem'+ (Number(i) + Number(1))
+                        ,before: function(obj){         //loading.....
+                            loading=layer.msg("正在上传文件，请稍后......", {icon: 16}); //上传loading
+                        }
+                        ,done: function(result){//返回值接收
+                            if(result.res){
+                                layer.close(loading);
+                                layer.msg(result.msg,{icon:1});
+                                $('#upload' + (Number(i) + Number(1))).hide();
+                                $('#reviewupload' + (Number(i) + Number(1))).show();
+                            }else{
+                                layer.close(loading);
+                                layer.msg(result.msg,{icon:5});
+                            }
+                        },error:function (index,upload) {
+                            layer.close(loading);
+                            layer.msg("未知错误,上传失败,请联系技术支持!",{icon:5});
+                        }
+                    });
+                }
+            }
+        });
+       /*END加载学生数据*/
+
+    });
+
+    function reupload(num) {
+        var $=layui.jquery;
+        var layer=layui.layer;
+        /*删除已存在的文件*/
+        $.ajax({
+            url: "/file/deletefile",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify({stuId:$('#stuId'+num).val(),filetype:"指导过程记录表"}),
+            async: false,
+            cache: false,
+            success: function (result) {
+                if (result.res){
+                    parent.layer.msg(result.msg,{icon:1});
+                    $('#upload'+num).show();
+                    $('#reviewupload'+num).hide();
+                }else {
+                    parent.layer.msg(result.msg,{icon:5});
+                }
+            }
+        });
+
+    }
+</script>
+
+
+</body>
+</html>

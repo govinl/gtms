@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>信阳农林学院毕业论文指导过程管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.min.css" rel="stylesheet">
+    <link href="/lib/layui/css/layui.css" rel="stylesheet">
+    <link href="/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/excel.js"></script>
+    <script type="text/javascript" src="/js/own/public.js"></script>
+    <script type="text/javascript" src="/js/own/teacher4.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<style type="text/css">
+    .layui-table-body{overflow-x: hidden;}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <!--自定义页面内容-->
+
+            <!--tips-->
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <blockquote class="layui-elem-quote">
+                        按需导出需要的题目，参数可填可不填，参数填写则代表按照参数查找，不填默认为不限制！<br>
+                        导出文件中，审核状态0代表未审核，1代表审核通过，敬请注意！
+                    </blockquote>
+                </div>
+            </div>
+            <!--END tips-->
+
+            <!--导出学生题目-->
+            <div style="padding: 20px; background-color: #887777;">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header" style="font-size: 20px">
+                                <div style="display: inline-block">
+                                导出学生自拟题目：
+                                </div>
+                                <div style="display: inline-block;float: right;" class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="lyear-switch switch-solid switch-success" onmouseover="tips('SubjectCheckbox');">
+                                        审核状态：&nbsp;&nbsp;
+                                        <input type="checkbox" checked="" id="SubjectCheckbox" name="SubjectCheckbox">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="layui-card-body" style="display:inline-block;background: ">
+                                <!--导出的核心元素-->
+                                <p style="font-size:15px;float: left;display: inline-block">可选参数：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    学生学号：<input id="xh">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    意愿指导老师：<input id="twant">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    类别：<input id="cname">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-secondary btn-round btn-w-xl"
+                                            style="float: right;vertical-align: middle" onclick="exportSubject();">导出
+                                    </button>
+                                </p>
+                                <!--END导出的核心元素-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--END导出学生题目-->
+            <!--导出教师题目-->
+            <div style="padding: 20px; background-color: #887777;margin-top: 5%">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header" style="font-size: 20px">
+                                <div style="display: inline-block">
+                                    导出教师自拟题目：
+                                </div>
+                                <div style="display: inline-block;float: right;" class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="lyear-switch switch-solid switch-success" onmouseover="tips('TopicCheckbox');">
+                                        审核状态：&nbsp;&nbsp;
+                                        <input type="checkbox" checked="" id="TopicCheckbox" name="TopicCheckbox">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="layui-card-body" style="display:inline-block;background: ">
+                                <!--导出的核心元素-->
+                                <p style="font-size:15px;float: left;display: inline-block">可选参数：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    教师编号：<input id="teaId">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    教师姓名：<input id="teaName">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    类别：<input id="cate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-secondary btn-round btn-w-xl"
+                                            style="float: right;vertical-align: middle" onclick="exportTopic();">导出
+                                    </button>
+                                </p>
+                                <!--END导出的核心元素-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--END导出教师题目-->
+
+
+
+            <!--END自定义页面内容-->
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+<script>
+    layui.use(['jquery','layer'], function() {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+    });
+    function tips(id) {
+        layer.tips('开代表审核通过，关代表未审核',"#"+id);
+    }
+
+    /*导出学生题目*/
+    function exportSubject() {
+        var $ = layui.jquery;
+        var data1 = {}
+        data1['xh'] = $('#xh').val();
+        data1['twant'] = $('#twant').val();
+        data1['cname'] = $('#cname').val();
+        data1['yn']=$("input:checkbox[name='SubjectCheckbox']").eq(0).is(":checked");
+        console.log(data1);
+        //进行必要的判断，来确定文件名
+        var excalName="自拟题目表";
+        if (data1.yn==true){
+            var excalName="审核通过"+excalName;
+        }else if (data1.yn==false){
+            var excalName="未审核"+excalName;
+        }
+        if(data1.xh!=null&&data1.xh!=''){
+            var excalName=excalName+"(学生学号："+data1.xh+")";
+        }
+        if (data1.twant!=null&&data1.twant!=''){
+           var excalName=excalName+"(意愿指导教师："+data1.twant+")";
+        }
+        if (data1.cname!=null&&data1.cname!=''){
+            var excalName=excalName+"(类别："+data1.cname+")";
+        }
+        var filename=excalName+".xlsx";
+
+        $.ajax({
+            url: "/subject/exportSubejct",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(data1),
+            async: true,
+            cache: false,
+            success: function (result1) {
+                console.log(result1.data);
+                if (result1.data==""){
+                    layer.confirm('系统检测到按该条件查找到的数据为0行，是否继续打印？',{
+                        title:false,
+                        async:false,
+                        btn: ['继续导出','取消导出']
+                    },function () {
+                        layer.closeAll('dialog');//关闭询问层
+                        result1.data.unshift({subject: "题目", stuId: "学生学号", twant: "意愿指导老师", cname: "类别", yN: "审核状态"});
+                        var data = LAY_EXCEL.filterExportData(result1.data, [
+                            'subject',
+                            'stuId',
+                            'twant',
+                            'cname',
+                            'yN',
+                        ]);
+                        LAY_EXCEL.exportExcel({
+                            sheet1: data
+                        }, filename, 'xlsx');
+                    },function () {
+                        console.log("停止运行！");
+                        //停止函数运行
+                        return;
+                    });
+                }else {
+                    result1.data.unshift({subject: "题目", stuId: "学生学号", twant: "意愿指导老师", cname: "类别", yN: "审核状态"});
+                    var data = LAY_EXCEL.filterExportData(result1.data, [
+                        'subject',
+                        'stuId',
+                        'twant',
+                        'cname',
+                        'yN',
+                    ]);
+                    LAY_EXCEL.exportExcel({
+                        sheet1: data
+                    }, filename, 'xlsx');
+                }
+            }
+        });
+    }
+    /*END导出学生题目*/
+    /*导出教师题目*/
+    function exportTopic() {
+        var $ = layui.jquery;
+        var data2 = {}
+        data2['teaId'] = $('#teaId').val();
+        data2['teaName'] = $('#teaName').val();
+        data2['cate'] = $('#cate').val();
+        data2['yn']=$("input:checkbox[name='TopicCheckbox']").eq(0).is(":checked");
+        console.log(data2);
+        //进行必要的判断，来确定文件名
+        var excalName="教师题目表";
+        if (data2.yn==true){
+            var excalName="审核通过"+excalName;
+        }else if (data2.yn==false){
+            var excalName="未审核"+excalName;
+        }
+        if(data2.teaId!=null&&data2.teaId!=''){
+            var excalName=excalName+"(教师编号："+data2.teaId+")";
+        }
+        if (data2.teaName!=null&&data2.teaName!=''){
+            var excalName=excalName+"(教师姓名："+data2.teaName+")";
+        }
+        if (data2.cate!=null&&data2.cate!=''){
+            var excalName=excalName+"(类别："+data2.cate+")";
+        }
+        var filename=excalName+".xlsx";
+
+        $.ajax({
+            url: "/topic/exportTopic",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(data2),
+            async: true,
+            cache: false,
+            success: function (result2) {
+                console.log(result2.data);
+                if (result2.data==""){
+                    layer.confirm('系统检测到按该条件查找到的数据为0行，是否继续打印？',{
+                        title:false,
+                        async:false,
+                        btn: ['继续导出','取消导出']
+                    },function () {
+                        layer.closeAll('dialog');//关闭询问层
+                        result2.data.unshift({topic:"题目",teaId:"教师编号",teaName:"教师姓名",cname:"类别",yN:"审核状态"});
+                        var data=LAY_EXCEL.filterExportData(result2.data,[
+                            'topic',
+                            'teaId',
+                            'teaName',
+                            'cname',
+                            'yN',
+                        ]);
+                        LAY_EXCEL.exportExcel({
+                            sheet1:data
+                        },filename, 'xlsx');
+                    },function () {
+                        console.log("停止运行！");
+                        //停止函数运行
+                        return;
+                    });
+                }else {
+                    result2.data.unshift({topic:"题目",teaId:"教师编号",teaName:"教师姓名",cname:"类别",yN:"审核状态"});
+                    var data=LAY_EXCEL.filterExportData(result2.data,[
+                        'topic',
+                        'teaId',
+                        'teaName',
+                        'cname',
+                        'yN',
+                    ]);
+                    LAY_EXCEL.exportExcel({
+                        sheet1:data
+                    },filename, 'xlsx');
+                }
+            }
+        });
+    }
+    /*END导出教师题目*/
+</script>
+
+</body>
+</html>

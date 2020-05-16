@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>信阳农林学院毕业论文指导过程管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.min.css" rel="stylesheet">
+    <link href="/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/own/public.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <!--自定义页面内容-->
+            <!--tips-->
+            <div class="layui-card">
+                <div class="layui-card-body " style="color: red">
+                    <blockquote class="layui-elem-quote" id="tips">
+                        以下为您的小组组内所有教师信息!单击对应教师可查看该教师提供的选题!
+                    </blockquote>
+                </div>
+            </div>
+
+            <!--组内教师-->
+            <table id="teachertable" lay-filter="teachertable"></table>
+            <!--END组内教师-->
+            <!--黑色分割线-->
+            <hr class="layui-bg-black" id="secondblack" style="display: none">
+            <!--END分割线-->
+            <!--单击小组时渲染的教师题目表格-->
+            <table id="teachertopictable" lay-filter="teachertopictable"></table>
+            <!--END教师题目表格-->
+            <!--END自定义页面内容-->
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    /*END*/
+    layui.use(['element','jquery','layer','table'], function () {
+        var $ = layui.jquery;
+        var layer=layui.layer;
+        var table=layui.table;
+
+
+        /*判断该学生是否已选择小组*/
+        var stuId={};
+        stuId["stuId"]=getCookie("userId");
+        $.ajax({
+            url: "/student/selectByStuId",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(stuId),
+            async: true,
+            cache: false,
+            success:function (result) {
+                if (result.res==true){
+                    if (result.data.stuTeam==""){
+                        layer.msg("您尚未选择小组,请选择后再进行查看!",{icon:5});
+                    } else {
+                        var teamName={};
+                        teamName['teamName']=result.data.stuTeam;
+                        /*已选小组后请求同组教师数据,并进行表格渲染*/
+                        $.ajax({
+                            url: "/teacher/selectTeacherByTeam",
+                            type: 'post',
+                            contentType: 'application/json;charset=UTF-8',
+                            dataType: 'json',
+                            data: JSON.stringify(teamName),
+                            async: true,
+                            cache: false,
+                            success: function (result) {
+                                table.render({
+                                    elem: '#teachertable'
+                                    ,data:result.data
+                                    ,cols: [[ //表头
+                                        {field: 'teaName', title: '姓名', width:'20%',align:'center'}
+                                        ,{field: 'dept', title: '系别',align:'center'}
+                                        ,{field: 'ptitle', title: '职称',align:'center'}
+                                        ,{field: 'teaPhone', title: '联系电话',align:'center'}
+                                        ,{field: 'teaTeam', title: '所属小组',align:'center'}
+                                    ]]
+                                });
+                            }
+                        });
+                        /*END请求*/
+                    }
+                }else {
+                    layer.msg("数据接口异常,请稍后再试!",{icon:5});
+                }
+            }
+        });
+        /*END判断*/
+
+        /*监听表格行双击事件*/
+        table.on('row(teachertable)', function(obj){
+            console.log(obj.tr) //得到当前行元素对象
+            console.log(obj.data) //得到当前行数据
+            getteachertopictabeldata(obj.data.teaId);
+        });
+        /*END监听*/
+    });
+
+    /*发起请求教师题目信息的请求*/
+    function getteachertopictabeldata(teaId) {
+        var $=layui.jquery;
+        var table=layui.table;
+        var teaIddata={};
+        teaIddata["teaId"]=teaId;
+        $.ajax({
+            url: "/topic/selecttopicByteaIdAndYn",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(teaIddata),
+            async: false,
+            cache: false,
+            success: function (result) {
+                table.render({
+                    elem: '#teachertopictable'
+                    ,data:result.data
+                    ,cols: [[ //表头
+                        {field: 'topic', title: '题目', width:'50%',}
+                        ,{field: 'cname', title: '所属类别'}
+                        ,{field: 'teaName', title: '教师姓名', }
+                    ]]
+                });
+            }
+        });
+        /*END教师题目请求*/
+        $('#secondblack').show();
+    }
+
+
+</script>
+</body>
+</html>

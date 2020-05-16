@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xyafu.gtms.dao.Reply_scoreMapper" >
+  <resultMap id="BaseResultMap" type="com.xyafu.gtms.entity.Reply_score" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="stuId" property="stuid" jdbcType="VARCHAR" />
+    <result column="stuName" property="stuname" jdbcType="VARCHAR" />
+    <result column="teaId" property="teaid" jdbcType="VARCHAR" />
+    <result column="teaName" property="teaname" jdbcType="VARCHAR" />
+    <result column="ptitle" property="ptitle" jdbcType="VARCHAR" />
+    <result column="fscore" property="fscore" jdbcType="DOUBLE" />
+    <result column="sscore" property="sscore" jdbcType="DOUBLE" />
+    <result column="tscore" property="tscore" jdbcType="DOUBLE" />
+    <result column="sumcore" property="sumcore" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, stuId, stuName, teaId, teaName, ptitle, fscore, sscore, tscore, sumcore
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from reply_score
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectreplyscoreBystuidandteaid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from reply_score
+        where stuId= #{stuid,jdbcType=VARCHAR} and teaId== #{teaid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectreplyscoreBystuId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from reply_score
+        where stuId = #{stuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from reply_score
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.xyafu.gtms.entity.Reply_score" >
+    insert into reply_score (id, stuId, stuName, 
+      teaId, teaName, ptitle, 
+      fscore, sscore, tscore, 
+      sumcore)
+    values (#{id,jdbcType=INTEGER}, #{stuid,jdbcType=VARCHAR}, #{stuname,jdbcType=VARCHAR}, 
+      #{teaid,jdbcType=VARCHAR}, #{teaname,jdbcType=VARCHAR}, #{ptitle,jdbcType=VARCHAR}, 
+      #{fscore,jdbcType=DOUBLE}, #{sscore,jdbcType=DOUBLE}, #{tscore,jdbcType=DOUBLE}, 
+      #{sumcore,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xyafu.gtms.entity.Reply_score" >
+    insert into reply_score
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="stuid != null" >
+        stuId,
+      </if>
+      <if test="stuname != null" >
+        stuName,
+      </if>
+      <if test="teaid != null" >
+        teaId,
+      </if>
+      <if test="teaname != null" >
+        teaName,
+      </if>
+      <if test="ptitle != null" >
+        ptitle,
+      </if>
+      <if test="fscore != null" >
+        fscore,
+      </if>
+      <if test="sscore != null" >
+        sscore,
+      </if>
+      <if test="tscore != null" >
+        tscore,
+      </if>
+      <if test="sumcore != null" >
+        sumcore,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="stuid != null" >
+        #{stuid,jdbcType=VARCHAR},
+      </if>
+      <if test="stuname != null" >
+        #{stuname,jdbcType=VARCHAR},
+      </if>
+      <if test="teaid != null" >
+        #{teaid,jdbcType=VARCHAR},
+      </if>
+      <if test="teaname != null" >
+        #{teaname,jdbcType=VARCHAR},
+      </if>
+      <if test="ptitle != null" >
+        #{ptitle,jdbcType=VARCHAR},
+      </if>
+      <if test="fscore != null" >
+        #{fscore,jdbcType=DOUBLE},
+      </if>
+      <if test="sscore != null" >
+        #{sscore,jdbcType=DOUBLE},
+      </if>
+      <if test="tscore != null" >
+        #{tscore,jdbcType=DOUBLE},
+      </if>
+      <if test="sumcore != null" >
+        #{sumcore,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xyafu.gtms.entity.Reply_score" >
+    update reply_score
+    <set >
+      <if test="stuid != null" >
+        stuId = #{stuid,jdbcType=VARCHAR},
+      </if>
+      <if test="stuname != null" >
+        stuName = #{stuname,jdbcType=VARCHAR},
+      </if>
+      <if test="teaid != null" >
+        teaId = #{teaid,jdbcType=VARCHAR},
+      </if>
+      <if test="teaname != null" >
+        teaName = #{teaname,jdbcType=VARCHAR},
+      </if>
+      <if test="ptitle != null" >
+        ptitle = #{ptitle,jdbcType=VARCHAR},
+      </if>
+      <if test="fscore != null" >
+        fscore = #{fscore,jdbcType=DOUBLE},
+      </if>
+      <if test="sscore != null" >
+        sscore = #{sscore,jdbcType=DOUBLE},
+      </if>
+      <if test="tscore != null" >
+        tscore = #{tscore,jdbcType=DOUBLE},
+      </if>
+      <if test="sumcore != null" >
+        sumcore = #{sumcore,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xyafu.gtms.entity.Reply_score" >
+    update reply_score
+    set stuId = #{stuid,jdbcType=VARCHAR},
+      stuName = #{stuname,jdbcType=VARCHAR},
+      teaId = #{teaid,jdbcType=VARCHAR},
+      teaName = #{teaname,jdbcType=VARCHAR},
+      ptitle = #{ptitle,jdbcType=VARCHAR},
+      fscore = #{fscore,jdbcType=DOUBLE},
+      sscore = #{sscore,jdbcType=DOUBLE},
+      tscore = #{tscore,jdbcType=DOUBLE},
+      sumcore = #{sumcore,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

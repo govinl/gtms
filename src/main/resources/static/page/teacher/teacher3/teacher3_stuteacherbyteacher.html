@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>信阳农林学院毕业论文指导过程管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.min.css" rel="stylesheet">
+    <link href="/lib/layui/css/layui.css" rel="stylesheet">
+    <link href="/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/excel.js"></script>
+    <script type="text/javascript" src="/js/own/public.js"></script>
+    <script type="text/javascript" src="/js/own/teacher4.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<style type="text/css">
+    .layui-table-body {
+        overflow-x: hidden;
+    }
+    .layui-form-switch{
+        margin: 0px;
+    }
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <!--自定义页面内容-->
+
+            <!--tips-->
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <blockquote class="layui-elem-quote">
+                        按学生分配学生的指导教师,单击学生的指导教师单元格,即可进行修改!
+                    </blockquote>
+                </div>
+            </div>
+            <!--END tips-->
+
+            <!--小组-->
+            <div style="padding: 20px; background-color: #887777;">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-body" style="display:inline-block;width: 100%">
+                                <!--核心元素-->
+                                <fieldset class="layui-elem-field">
+                                    <legend style="color: black;">学生</legend>
+                                    <div class="layui-field-box">
+                                        <div style="margin-bottom: 10px;height: 20px">
+                                            <form class="layui-form" action=""  style="float: right;">
+                                            <span style="color: #11EE69;float: right;font-size: 25px">仅查看未拥有指导教师的学生</span>
+                                            <input type="checkbox" checked=""  lay-skin="switch" id="stuteacherswith"
+                                                   lay-filter="switchTest" lay-text="ON|OFF">
+                                            </form>
+                                        </div>
+                                        <div>
+                                            <table id="studenttable" lay-filter="studenttable"></table>
+                                        </div>
+                                        <!--END教师表格-->
+                                    </div>
+                                </fieldset>
+                                <!--END核心元素-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--END小组-->
+            <!--END自定义页面内容-->
+        </div>
+    </div>
+</div>
+</div>
+<!--第一列序号-->
+<script type="text/html" id="xuhao">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<!--指定学生指导教师所需元素-->
+<form class="layui-form" id="stuTeacheriframe" style="display: none;font-size: 25px">
+    <div class="layui-form-item" style="margin-top: 30px;height: 50px">
+        <label class="layui-form-label" style="width: 200px;float: left">学生学号：</label>
+        <div class="layui-input-block" style="display: inline-block;width: 400px;float: left;margin-left: 0">
+            <input id="stuId" style="width: 400px" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-top: 30px;height: 50px">
+        <label class="layui-form-label" style="width: 200px;float: left">学生姓名：</label>
+        <div class="layui-input-block" style="display: inline-block;width: 400px;float: left;margin-left: 0">
+            <input id="stuName" style="width: 400px" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-top: 30px;height: 50px">
+        <label class="layui-form-label" style="width: 200px;float: left">指导教师：</label>
+        <div class="layui-input-block" style="display: inline-block;width: 400px;float: left;margin-left: 0">
+            <select name="stuTeacherselect" lay-filter="stuTeacherselect" id="stuTeacherselect">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-left: 150px">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn layui-btn-lg" onclick="updataStudentStuTeacher();">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-lg layui-btn-danger" onclick="closethislayer();">取消</button>
+        </div>
+    </div>
+</form>
+<!--END所需元素-->
+
+<script>
+    var lastteaName;//该全局变量用于表格中教师姓名的传值
+    layui.use(['form', 'layer', 'util', 'transfer', 'element','table','jquery'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , util = layui.util
+            , transfer = layui.transfer
+            ,table=layui.table
+            ,$=layui.jquery
+            , element = layui.element;
+
+
+        /*打开页面时仅查看未拥有指导教师的学生*/
+        onlyNoStuTeacher();
+        /*END仅查看*/
+
+        //监听开关
+        form.on('switch(switchTest)', function(data){
+            console.log(this.checked);
+            if (this.checked) {
+                onlyNoStuTeacher();
+            }else if (!this.checked){
+                hasStuTeacher();
+            } else {
+                layer.msg("数据判定异常,请联系技术支持!")
+            }
+        });
+
+        /*监听小组信息变更*/
+        table.on('tool(studenttable)', function(obj){ //注：tool 是工具条事件名，table 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+            /*console.log(data,layEvent,tr);*/
+            /*点击学生对应的指导教师单元格时的响应事件*/
+            if (layEvent=="changestuTeacher"){
+                layer.open({
+                    type: 1
+                    ,title: false //不显示标题栏
+                    ,closeBtn: false
+                    ,area: ['700px', '400px']
+                    ,shade: 0.8
+                    ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                    ,btnAlign: 'c'
+                    ,moveType: 1 //拖拽模式，0或者1
+                    ,content: $('#stuTeacheriframe')
+                });
+                $('#stuId').val(data.stuId);
+                $('#stuName').val(data.stuName);
+                /*请求所有组内教师信息,并渲染到select下*/
+                var teaId={};
+                teaId['teaId']=getCookie("userId");
+                teaId['role']="teacher";
+                $.ajax({
+                    url: "/teacher/selectTnameById",
+                    type: 'post',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    data: JSON.stringify(teaId),
+                    async: false,
+                    cache: false,
+                    success: function (result) {
+                        /*console.log(result);*/
+                        $('#stuTeacherselect').append("<option value=\"\"></option>");
+                        for (let i=0;i<result.data.length;i++){
+                            if (result.data[i].teaId==data.stuTeacher){
+                                $('#stuTeacherselect').append("<option value=\"" + result.data[i].teaId + "\" selected>" +result.data[i].teaId+ result.data[i].teaName + "</option>");
+                            } else {
+                                $('#stuTeacherselect').append("<option value=\"" + result.data[i].teaId + "\">" +result.data[i].teaId+ result.data[i].teaName + "</option>");
+                            }
+                            form.render();
+                        }  
+                    }
+                });
+                /*END请求*/
+
+            }
+            /*END响应事件*/
+        });
+
+    });
+
+    /*查看所有学生*/
+    function hasStuTeacher() {
+        var $=layui.jquery;
+        var layer=layui.layer;
+        var table=layui.table;
+        var datastudent = {};
+        datastudent["teaId"] = getCookie('userId');
+        datastudent["role"] = "student";
+        /*加载学生数据*/
+        $.ajax({
+            url: "/teacher/selectTnameById",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(datastudent),
+            async: false,
+            cache: false,
+            success: function (result) {
+                console.log(result);
+                table.render({
+                    elem: '#studenttable'
+                    , id: 'studenttablerender'
+                    , data: result.data
+                    , response: {
+                        statusName: 'res'
+                        , statusCode: true
+                    }
+                    , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                    , cols: [[
+                        , {title: '序号', templet: '#xuhao'}
+                        , {field: 'stuName', title: '姓名', width: '10%'}
+                        , {field: 'dept', title: '系别', width: '10%'}
+                        , {field: 'zhuanye', title: '专业', width: '10%'}
+                        , {field: 'stuPhone', title: '联系电话', width: '20%'}
+                        , {field: 'stuTeam', title: '所属小组', width: '30%'}
+                        , {
+                            field: 'stuTeacher',
+                            title: '指导教师',
+                            event: 'changestuTeacher',
+                            width: '30%',
+                            templet: function (d) {
+                                return d.stuTeacher == "" ? '尚未指定' : getTeacherNameByteaId(d) != null ? "接口异常" : lastteaName;//我也不知道怎么对的,如果有人想改,可以改其他的,别改这个
+                            }
+                        }
+                    ]]
+                });
+            }
+        })
+        /*END加载学生数据*/
+    }
+    /*END查看所有学生学生*/
+
+    /*仅查看未拥有指导教师的学生*/
+    function onlyNoStuTeacher() {
+        var $=layui.jquery;
+        var layer=layui.layer;
+        var table=layui.table;
+        var teaId = {};
+        teaId["teaId"] = getCookie('userId');
+        /*加载学生数据*/
+        $.ajax({
+            url: "/teacher/selectByPrimaryKey",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(teaId),
+            async: false,
+            cache: false,
+            success: function (result) {
+                var tname={};
+                tname['teamName']=result.data[0].teaTeam;
+                $.ajax({
+                    url: "/student/selectNoStuTeacherStudentByTname",
+                    type: 'post',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    data: JSON.stringify(tname),
+                    async: false,
+                    cache: false,
+                    success: function (resultstudent) {
+                        table.render({
+                            elem: '#studenttable'
+                            , id: 'studenttablerender'
+                            , data: resultstudent.data
+                            , response: {
+                                statusName: 'res'
+                                , statusCode: true
+                            }
+                            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                            , cols: [[
+                                {title: '序号', templet: '#xuhao'}
+                                , {field: 'stuName', title: '姓名', width: '10%'}
+                                , {field: 'dept', title: '系别', width: '10%'}
+                                , {field: 'zhuanye', title: '专业', width: '10%'}
+                                , {field: 'stuPhone', title: '联系电话', width: '20%'}
+                                , {field: 'stuTeam', title: '所属小组', width: '30%'}
+                                , {
+                                    field: 'stuTeacher',
+                                    title: '指导教师',
+                                    event: 'changestuTeacher',
+                                    width: '30%',
+                                    templet: function (d) {
+                                        return d.stuTeacher == "" ? '尚未指定' : getTeacherNameByteaId(d) != null ? "接口异常" : lastteaName;//我也不知道怎么对的,如果有人想改,可以改其他的,别改这个
+                                    }
+                                }
+                            ]]
+                        });
+                    }
+                })
+            }
+        })
+        /*END加载学生数据*/
+    }
+    /*END仅查看未拥有指导教师的学生*/
+    /*根据教师ID查找教师姓名,在表格中显示,提升使用体验*/
+    function getTeacherNameByteaId(d) {
+        var stuTeacherdata={};
+        stuTeacherdata['teaId']=d.stuTeacher;
+        $.ajax({
+            url: "/teacher/selectByPrimaryKey",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(stuTeacherdata),
+            async: false,
+            cache: false,
+            success: function (result) {
+                console.log(result.data);
+                lastteaName=result.data[0].teaId+result.data[0].teaName;//将学生的指导教师姓名赋给lasteaName
+            }
+        });
+    }
+    /*END(getTeacherNameByteaId)方法*/
+
+    /*关闭打开的窗口*/
+    function closethislayer() {
+        var layer=layui.layer;
+        layer.closeAll();
+    }
+    /*END关闭窗口方法*/
+
+    /*提交指导教师*/
+    function updataStudentStuTeacher() {
+        var $=layui.jquery;
+        var layer=layui.layer;
+        var table=layui.table;
+        var stuTeacher=$('#stuTeacherselect').val();
+        if (stuTeacher==null||stuTeacher==""){
+            layer.msg("请选择指导教师后再进行提交",{icon:5});
+        } else {
+            var updataStudentStuTeacherData={};
+            updataStudentStuTeacherData['stuId']=$('#stuId').val();
+            updataStudentStuTeacherData['stuTeacher']=stuTeacher;
+            $.ajax({
+                url: "/student/updataStudentStuTeacher",
+                type: 'post',
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                data: JSON.stringify(updataStudentStuTeacherData),
+                async: false,
+                cache: false,
+                success: function (result) {
+                    if (result.res){
+                        parent.layer.msg(result.msg,{icon:1});
+                        window.location.reload();
+                    } else if (!result.res){
+                        parent.layer.msg(result.msg,{icon:5});
+                    }
+                    layer.closeAll();
+                    $('#stuTeacherselect').empty();
+                }
+            });
+        }
+    }
+    /*END提交*/
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>信阳农林学院毕业论文指导过程管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.min.css" rel="stylesheet">
+    <link href="/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/own/public.js"></script>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <!--自定义页面内容-->
+            <!--tips-->
+            <div class="layui-card">
+                <div class="layui-card-body " style="color: red">
+                    <blockquote class="layui-elem-quote" id="tips">
+                        以下为教师信息,您可以在搜索栏输入教职工编号以搜索指定人员!
+                    </blockquote>
+                </div>
+            </div>
+
+            <div id="searchdiv" style="/*margin-bottom: -20%;position: absolute;z-index: 99999;*/">
+                <span>输入教职工编号以进行搜索：</span>
+                <input id="searchinput" type="text" oninput="searchteacherByteaId();" onporpertychange="searchteacherByteaId();">
+            </div>
+            <!--组内教师-->
+            <div>
+            <table id="teachertable" lay-filter="teachertable"></table>
+            </div>
+            <!--END组内教师-->
+            <!--END自定义页面内容-->
+        </div>
+    </div>
+</div>
+
+<!--修改教师权限所需元素-->
+<form class="layui-form" id="Teacheriframe" style="display: none;font-size: 25px">
+    <div class="layui-form-item" style="margin-top: 30px;height: 50px">
+        <label class="layui-form-label" style="width: 200px;float: left">教师编号：</label>
+        <div class="layui-input-block" style="display: inline-block;width: 400px;float: left;margin-left: 0">
+            <input id="teaId" style="width: 400px" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-top: 30px;height: 50px">
+        <label class="layui-form-label" style="width: 200px;float: left">教师姓名：</label>
+        <div class="layui-input-block" style="display: inline-block;width: 400px;float: left;margin-left: 0">
+            <input id="teaName" style="width: 400px" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-top: 30px;height: 50px">
+        <label class="layui-form-label" style="width: 200px;float: left">权限级别：</label>
+        <div class="layui-input-block" style="display: inline-block;width: 400px;float: left;margin-left: 0">
+            <select name="plevelselect" lay-filter="plevelselect" id="plevelselect">
+                <option value=""></option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-left: 150px">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn layui-btn-lg" onclick="updataTeacherPlevel();">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-lg layui-btn-danger" onclick="closethislayer();">取消</button>
+        </div>
+    </div>
+</form>
+<!--END所需元素-->
+<!--权限级别释义按钮-->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="levelmean">权限级别释义</button>
+    </div>
+</script>
+<!--END权限级别释义按钮-->
+<!--权限级别释义-->
+<div id="levelmeaning" style="display: none;font-size: 20px;font-family: 楷体;text-align: center;vertical-align: center;width: 100%;height: 100%">
+    <span>“2”：”普通教师“</span><br>
+    <span>”3“：“小组组长或秘书”</span><br>
+    <span>”4“：”教研室主任“</span><br>
+    <span>“5”：”系统管理员“</span><br>
+</div>
+<!--END权限级别释义-->
+<script>
+    var teachertableIns;//传递表格渲染元素
+    /*搜索栏的响应事件*/
+    function searchteacherByteaId(){
+        var searchid=$("#searchinput").val();
+        if (searchid==null||searchid==""){
+            teachertableIns.reload({
+                where: {searchteaId:null}
+            })
+        }else {
+            teachertableIns.reload({
+                url:'/teacher/selectTeacherWithPage'
+                ,where: {searchteaId:searchid}
+            })
+        }
+    }
+    /*END响应事件*/
+
+    function closethislayer(){
+        var layer=layui.layer;
+        var $=layui.jquery;
+        $("#Teacheriframe").hide();
+        layer.closeAll();
+    }
+
+    /*提交权限级别的修改*/
+    function updataTeacherPlevel(){
+        var layer=layui.layer;
+        if ($('#plevelselect').val()==null||$('#plevelselect').val()==""){
+            layer.msg("不允许权限级别为空的提交!",{icon:5})
+            return;
+        }
+        var updataTeacherPlevelData={};
+        updataTeacherPlevelData['teaId']=$('#teaId').val();
+        updataTeacherPlevelData['plevel']=$('#plevelselect').val();
+        $.ajax({
+            url: "/teacher/updataTeacherPlevel",
+            type: 'post',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            data: JSON.stringify(updataTeacherPlevelData),
+            async: false,
+            cache: false,
+            success: function (result) {
+                if (result.res){
+                    parent.layer.msg(result.msg,{icon:1});
+                    teachertableIns.reload({});
+                } else if (!result.res){
+                    parent.layer.msg(result.msg,{icon:5});
+                }
+                layer.closeAll('page');
+                $("#Teacheriframe").hide();
+            }
+        });
+    }
+    /*END提交*/
+
+    layui.use(['element','jquery','layer','table'], function () {
+        var $ = layui.jquery;
+        var layer=layui.layer;
+        var table=layui.table;
+
+
+        teachertableIns=table.render({
+            elem: '#teachertable'
+            ,id:'teachertable'
+            ,url:'/teacher/selectTeacherWithPage'
+            ,toolbar: '#toolbarDemo' //开启头部工具栏
+            ,method:'post'
+            ,defaultToolbar: ['filter', 'exports', 'print']
+            ,title: '教师信息表'
+            ,response:{
+                statusName: 'res'
+                ,statusCode:true
+                ,countName: 'msg'
+            }
+            ,cols: [[
+                {field: 'teaId', title: '教职工编号', width:'20%',align:'center'}
+                ,{field: 'teaName', title: '姓名',align:'center'}
+                ,{field: 'dept', title: '系别',align:'center'}
+                ,{field: 'ptitle', title: '职称',align:'center'}
+                ,{field: 'teaPhone', title: '联系电话',align:'center'}
+                ,{field: 'teaTeam', title: '所属小组',align:'center'}
+                ,{field: 'plevel', title: '权限级别',align:'center',event:'updataTeacherLeavel'}
+                ,{field: 'role', title: '身份',align:'center'}
+            ]]
+            ,page: true
+        });
+
+
+        /*监听教师权限级别变更*/
+        table.on('tool(teachertable)', function(obj) { //注：tool 是工具条事件名，table 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+            /*console.log(data,layEvent,tr);*/
+            /*点击教师对应的权限级别单元格时的响应事件*/
+            if (layEvent == "updataTeacherLeavel") {
+                layer.open({
+                    type: 1
+                    , title: false //不显示标题栏
+                    , closeBtn: false
+                    , area: ['700px', '400px']
+                    , shade: 0.8
+                    , id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                    , btnAlign: 'c'
+                    , moveType: 1 //拖拽模式，0或者1
+                    , content: $('#Teacheriframe')
+                });
+                $('#teaId').val(data.teaId);
+                $('#teaName').val(data.teaName);
+            }
+            /*END响应事件*/
+        });
+
+
+        //头工具栏事件
+        table.on('toolbar(teachertable)', function(obj){
+            switch(obj.event){
+                case 'levelmean':
+                    layer.open({
+                        type: 1
+                        , title: '权限级别释义' //不显示标题栏
+                        , area: ['200px', '200px']
+                        , shade: 0.8
+                        , id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                        , btnAlign: 'c'
+                        , moveType: 1 //拖拽模式，0或者1
+                        , content: $('#levelmeaning')
+                    });
+                    break;
+            }
+        });
+
+
+
+    });
+
+
+
+
+</script>
+</body>
+</html>
